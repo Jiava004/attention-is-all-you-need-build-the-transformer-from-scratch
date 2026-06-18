@@ -521,8 +521,41 @@ def run_transformer_forward(src_ids, tgt_ids, model_params, num_heads, pad_id):
     # 7. 计算对数概率 (Log Softmax) 并返回
     return apply_log_softmax_over_vocab(logits)
 
-# Step 52 - init_encoder_layer_parameters (not yet solved)
-# TODO: implement
+# Step 52 - init_encoder_layer_parameters
+import torch
+import math
+
+def init_encoder_layer_parameters(d_model, num_heads, d_ff):
+    """Return a dict of leaf tensors with requires_grad=True for one encoder layer."""
+    # TODO: allocate w_q, w_k, w_v, w_o, w1, b1, w2, b2, attn_gamma, attn_beta, ffn_gamma, ffn_beta.
+    p = {}
+    p['w_q'] = torch.empty(d_model, d_model, dtype=torch.float32)
+    p['w_k'] = torch.empty(d_model, d_model, dtype=torch.float32)
+    p['w_v'] = torch.empty(d_model, d_model, dtype=torch.float32)
+    p['w_o'] = torch.empty(d_model, d_model, dtype=torch.float32)
+
+    p['w1'] = torch.empty(d_model, d_ff, dtype=torch.float32)
+    p['w2'] = torch.empty(d_ff, d_model, dtype=torch.float32)
+
+    torch.nn.init.xavier_uniform_(p['w_q'])
+    torch.nn.init.xavier_uniform_(p['w_k'])
+    torch.nn.init.xavier_uniform_(p['w_v'])
+    torch.nn.init.xavier_uniform_(p['w_o'])
+    torch.nn.init.xavier_uniform_(p['w1'])
+    torch.nn.init.xavier_uniform_(p['w2'])
+
+    p['b1'] = torch.zeros(d_ff, dtype=torch.float32)
+    p['b2'] = torch.zeros(d_model, dtype=torch.float32)
+
+    p['attn_gamma'] = torch.ones(d_model, dtype=torch.float32)
+    p['ffn_gamma'] = torch.ones(d_model, dtype=torch.float32)
+    p['attn_beta'] = torch.zeros(d_model, dtype=torch.float32)
+    p['ffn_beta'] = torch.zeros(d_model, dtype=torch.float32)
+
+    for k in p:
+        p[k].requires_grad = True
+
+    return p
 
 # Step 53 - init_decoder_layer_parameters (not yet solved)
 # TODO: implement
