@@ -557,8 +557,50 @@ def init_encoder_layer_parameters(d_model, num_heads, d_ff):
 
     return p
 
-# Step 53 - init_decoder_layer_parameters (not yet solved)
-# TODO: implement
+# Step 53 - init_decoder_layer_parameters
+import torch
+
+def init_decoder_layer_parameters(d_model, num_heads, d_ff):
+    # TODO: return a dict of requires_grad tensors for one decoder layer
+    p = {}
+    p['w_q_self'] = torch.empty(d_model, d_model, dtype=torch.float32)
+    p['w_k_self'] = torch.empty(d_model, d_model, dtype=torch.float32)
+    p['w_v_self'] = torch.empty(d_model, d_model, dtype=torch.float32)
+    p['w_o_self'] = torch.empty(d_model, d_model, dtype=torch.float32)
+    p['w_q_cross'] = torch.empty(d_model, d_model, dtype=torch.float32)
+    p['w_k_cross'] = torch.empty(d_model, d_model, dtype=torch.float32)
+    p['w_v_cross'] = torch.empty(d_model, d_model, dtype=torch.float32)
+    p['w_o_cross'] = torch.empty(d_model, d_model, dtype=torch.float32)
+
+    p['w1'] = torch.empty(d_model, d_ff, dtype=torch.float32)
+    p['w2'] = torch.empty(d_ff, d_model, dtype=torch.float32)
+
+    torch.nn.init.xavier_uniform_(p['w_q_self'])
+    torch.nn.init.xavier_uniform_(p['w_k_self'])
+    torch.nn.init.xavier_uniform_(p['w_v_self'])
+    torch.nn.init.xavier_uniform_(p['w_o_self'])
+    torch.nn.init.xavier_uniform_(p['w_q_cross'])
+    torch.nn.init.xavier_uniform_(p['w_k_cross'])
+    torch.nn.init.xavier_uniform_(p['w_v_cross'])
+    torch.nn.init.xavier_uniform_(p['w_o_cross'])
+    torch.nn.init.xavier_uniform_(p['w1'])
+    torch.nn.init.xavier_uniform_(p['w2'])
+
+    p['b1'] = torch.zeros(d_ff, dtype=torch.float32)
+    p['b2'] = torch.zeros(d_model, dtype=torch.float32)
+
+    p['self_gamma'] = torch.ones(d_model, dtype=torch.float32)
+    p['self_beta'] = torch.zeros(d_model, dtype=torch.float32)
+    p['cross_gamma'] = torch.ones(d_model, dtype=torch.float32)
+    p['cross_beta'] = torch.zeros(d_model, dtype=torch.float32)
+
+    p['ffn_gamma'] = torch.ones(d_model, dtype=torch.float32)
+    p['ffn_beta'] = torch.zeros(d_model, dtype=torch.float32)
+
+    for k in p:
+        p[k].requires_grad = True
+
+    return p
 
 # Step 54 - init_embedding_and_projection_parameters (not yet solved)
 # TODO: implement
